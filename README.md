@@ -50,7 +50,7 @@ This project showcases professional database design and SQL skills relevant to f
 - Fields: account_id (UUID), user_id (FK), account_type, balance, currency
 - Supports multiple accounts per user
 
-**transactions** ⭐ *Star Schema Fact Table*
+**transactions** *Star Schema Fact Table*
 - All financial transactions with full audit trail
 - Fields: transaction_id (UUID), account_id (FK), category_id (FK), date, amount, type
 - Unique constraint prevents duplicate imports
@@ -163,7 +163,7 @@ finance-analytics-db/
 └── README.md                     # This file
 ```
 
-## 💡 SQL Skills Demonstrated
+## SQL Skills Demonstrated
 
 ### Core SQL
 -  CREATE TABLE with constraints (PRIMARY KEY, FOREIGN KEY, CHECK, UNIQUE)
