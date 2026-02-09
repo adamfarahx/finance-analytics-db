@@ -71,61 +71,6 @@ This project showcases professional database design and SQL skills relevant to f
 - Fields: recurring_id (UUID), account_id (FK), frequency, next_occurrence
 - Supports automated transaction generation
 
-## Quick Start
-
-### Prerequisites
-- PostgreSQL 14+ installed
-- Terminal/command line access
-- Basic understanding of SQL
-
-### Installation
-
-1. **Clone or download the project files**
-
-2. **Create a new database**
-```bash
-createdb finance_analytics_db
-```
-
-3. **Run the master setup script**
-```bash
-psql -d finance_analytics_db -f 00_master_setup.sql
-```
-
-This will automatically:
-- Create all tables with constraints
-- Add performance indexes
-- Create views and materialized views
-- Set up triggers and functions
-- Load sample data
-
-### Alternative: Manual Setup
-
-Run scripts individually in this order:
-```bash
-psql -d finance_analytics_db -f 01_create_tables.sql
-psql -d finance_analytics_db -f 02_create_indexes.sql
-psql -d finance_analytics_db -f 03_create_views.sql
-psql -d finance_analytics_db -f 04_create_triggers.sql
-psql -d finance_analytics_db -f 05_seed_data.sql
-```
-
-## 📈 Usage Examples
-
-### Running Analytical Queries
-
-```bash
-# Connect to database
-psql -d finance_analytics_db
-
-# Run all analytical queries
-\i 06_analytical_queries.sql
-
-# Or run individual queries
-\i 06_analytical_queries.sql
-# Then scroll through results
-```
-
 ### Common Queries
 
 **View Account Overview**
@@ -164,7 +109,7 @@ Tests include:
 - Date validation
 - NULL value detection
 
-## 🔧 Advanced Features
+## Advanced Features
 
 ### Automated Balance Updates
 
@@ -221,42 +166,42 @@ finance-analytics-db/
 ## 💡 SQL Skills Demonstrated
 
 ### Core SQL
-- ✅ CREATE TABLE with constraints (PRIMARY KEY, FOREIGN KEY, CHECK, UNIQUE)
-- ✅ INSERT, UPDATE, DELETE, SELECT
-- ✅ WHERE clauses with complex conditions
-- ✅ JOINs (INNER, LEFT, CROSS)
-- ✅ Aggregate functions (COUNT, SUM, AVG, MIN, MAX)
-- ✅ GROUP BY and HAVING
-- ✅ ORDER BY with multiple columns
+-  CREATE TABLE with constraints (PRIMARY KEY, FOREIGN KEY, CHECK, UNIQUE)
+-  INSERT, UPDATE, DELETE, SELECT
+-  WHERE clauses with complex conditions
+-  JOINs (INNER, LEFT, CROSS)
+-  Aggregate functions (COUNT, SUM, AVG, MIN, MAX)
+-  GROUP BY and HAVING
+-  ORDER BY with multiple columns
 
 ### Intermediate SQL
-- ✅ Subqueries and derived tables
-- ✅ CASE statements
-- ✅ COALESCE and NULLIF
-- ✅ String functions and date arithmetic
-- ✅ CREATE INDEX with various strategies
-- ✅ CREATE VIEW
-- ✅ UUID generation (gen_random_uuid)
+-  Subqueries and derived tables
+-  CASE statements
+-  COALESCE and NULLIF
+-  String functions and date arithmetic
+-  CREATE INDEX with various strategies
+-  CREATE VIEW
+-  UUID generation (gen_random_uuid)
 
 ### Advanced SQL
-- ✅ Window functions (ROW_NUMBER, RANK, LAG, LEAD)
-- ✅ Common Table Expressions (CTEs)
-- ✅ Recursive CTEs for hierarchical data
-- ✅ Materialized views with refresh
-- ✅ Triggers and functions (PL/pgSQL)
-- ✅ ON CONFLICT (UPSERT)
-- ✅ Partial indexes
-- ✅ Self-referencing foreign keys
-- ✅ Array aggregation
+-  Window functions (ROW_NUMBER, RANK, LAG, LEAD)
+-  Common Table Expressions (CTEs)
+-  Recursive CTEs for hierarchical data
+-  Materialized views with refresh
+-  Triggers and functions (PL/pgSQL)
+-  ON CONFLICT (UPSERT)
+-  Partial indexes
+-  Self-referencing foreign keys
+-  Array aggregation
 
 ### Financial Domain Knowledge
-- ✅ DECIMAL precision for monetary values (never FLOAT!)
-- ✅ Transaction types (debit/credit)
-- ✅ Balance reconciliation
-- ✅ Duplicate transaction detection
-- ✅ Audit trails (created_at vs transaction_date)
-- ✅ Soft deletes for compliance
-- ✅ Budget variance analysis
+- DECIMAL precision for monetary values (never FLOAT!)
+-  Transaction types (debit/credit)
+-  Balance reconciliation
+-  Duplicate transaction detection
+-  Audit trails (created_at vs transaction_date)
+-  Soft deletes for compliance
+-  Budget variance analysis
 
 ## Contact
 
@@ -275,10 +220,11 @@ finance-analytics-db/
 ---
 
 ## License
-
 This is a portfolio project for educational and demonstration purposes.
-=======
-# finance-analytics-db
+
+---
+
+## finance-analytics-db
 PostgreSQL database for financial transaction analytics with advanced SQL queries.
 >>>>>>> 049b19d19cc304a71a6120a401193903f977b3b6
 
