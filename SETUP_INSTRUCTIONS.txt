@@ -1,0 +1,197 @@
+FINANCE ANALYTICS DATABASE - SETUP INSTRUCTIONS
+================================================
+
+STEP-BY-STEP SETUP GUIDE
+========================
+
+1. INSTALL POSTGRESQL (if not already installed)
+   
+   macOS:
+   brew install postgresql
+   brew services start postgresql
+   
+   Ubuntu/Debian:
+   sudo apt update
+   sudo apt install postgresql postgresql-contrib
+   sudo systemctl start postgresql
+   
+   Windows:
+   Download from: https://www.postgresql.org/download/windows/
+
+2. CREATE THE DATABASE
+   
+   Open your terminal and run:
+   createdb finance_analytics_db
+   
+   Or if you need to use sudo:
+   sudo -u postgres createdb finance_analytics_db
+
+3. NAVIGATE TO THE SQL FILES
+   
+   cd /path/to/your/downloaded/sql/files
+   
+   Make sure you see these files:
+   00_master_setup.sql
+   01_create_tables.sql
+   02_create_indexes.sql
+   03_create_views.sql
+   04_create_triggers.sql
+   05_seed_data.sql
+   06_analytical_queries.sql
+   07_data_quality_tests.sql
+
+4. RUN THE MASTER SETUP (EASIEST METHOD)
+   
+   psql -d finance_analytics_db -f 00_master_setup.sql
+   
+   This will automatically run all setup scripts in the correct order.
+
+5. VERIFY INSTALLATION
+   
+   Connect to the database:
+   psql -d finance_analytics_db
+   
+   Then run:
+   \dt                    -- List all tables (should see 6 tables)
+   SELECT COUNT(*) FROM transactions;   -- Should show transaction count
+   SELECT * FROM v_account_overview;    -- Should show account data
+
+6. TRY SOME QUERIES
+   
+   While connected (psql -d finance_analytics_db):
+   
+   \i 06_analytical_queries.sql    -- Run all analytical queries
+   \i 07_data_quality_tests.sql    -- Run data quality tests
+   
+   Or try individual queries:
+   SELECT * FROM v_monthly_spending LIMIT 10;
+   SELECT * FROM v_current_budget_status;
+
+ALTERNATIVE: MANUAL SETUP
+==========================
+
+If you prefer to run scripts one at a time:
+
+psql -d finance_analytics_db -f 01_create_tables.sql
+psql -d finance_analytics_db -f 02_create_indexes.sql
+psql -d finance_analytics_db -f 03_create_views.sql
+psql -d finance_analytics_db -f 04_create_triggers.sql
+psql -d finance_analytics_db -f 05_seed_data.sql
+
+TROUBLESHOOTING
+===============
+
+Problem: "command not found: psql"
+Solution: PostgreSQL is not in your PATH. Try:
+  - macOS: Add to ~/.zshrc or ~/.bash_profile: export PATH=$PATH:/usr/local/pgsql/bin
+  - Linux: sudo apt install postgresql-client
+  - Windows: Add PostgreSQL bin directory to system PATH
+
+Problem: "database does not exist"
+Solution: Create it first: createdb finance_analytics_db
+
+Problem: "permission denied"
+Solution: Try: sudo -u postgres psql -d finance_analytics_db -f 00_master_setup.sql
+
+Problem: "function gen_random_uuid() does not exist"
+Solution: Connect to database and run: CREATE EXTENSION IF NOT EXISTS pgcrypto;
+
+Problem: "No such file or directory"
+Solution: Make sure you're in the directory with the .sql files (use 'cd' command)
+
+USEFUL COMMANDS
+===============
+
+Connect to database:
+  psql -d finance_analytics_db
+
+List databases:
+  psql -l
+
+Drop database (CAREFUL - deletes everything!):
+  dropdb finance_analytics_db
+
+Backup database:
+  pg_dump finance_analytics_db > backup.sql
+
+Restore database:
+  psql -d finance_analytics_db < backup.sql
+
+Export query to CSV:
+  psql -d finance_analytics_db -c "SELECT * FROM v_monthly_spending" -o output.csv --csv
+
+NEXT STEPS
+==========
+
+1. Explore the sample data
+2. Run the analytical queries (06_analytical_queries.sql)
+3. Modify queries to answer your own questions
+4. Add your own transactions and categories
+5. Create custom views and queries
+6. Document your customizations for your portfolio
+
+VSCODE INTEGRATION
+==================
+
+If you want to use VSCode with SQL:
+
+1. Install the "PostgreSQL" extension by Chris Kolkman
+2. Connect to your database in the extension
+3. You can run .sql files directly from VSCode
+4. Results appear in the OUTPUT panel
+
+COMMON QUERIES TO TRY
+======================
+
+-- See all your data
+SELECT * FROM v_account_overview;
+SELECT * FROM v_monthly_spending LIMIT 10;
+SELECT * FROM v_current_budget_status;
+
+-- Add a test transaction
+INSERT INTO transactions (account_id, category_id, transaction_date, amount, transaction_type, merchant_name)
+SELECT 
+    a.account_id,
+    c.category_id,
+    CURRENT_DATE,
+    25.00,
+    'debit',
+    'Test Store'
+FROM accounts a
+CROSS JOIN categories c
+WHERE a.account_name = 'Chase Checking'
+    AND c.category_name = 'Shopping'
+LIMIT 1;
+
+-- Check if it worked
+SELECT * FROM transactions ORDER BY created_at DESC LIMIT 1;
+
+GITHUB REPOSITORY SETUP
+=======================
+
+To put this on GitHub:
+
+1. Create a new repository on GitHub
+2. In your terminal, in the directory with the SQL files:
+   
+   git init
+   git add *.sql *.md
+   git commit -m "Initial commit: Finance Analytics Database"
+   git branch -M main
+   git remote add origin https://github.com/yourusername/finance-analytics-db.git
+   git push -u origin main
+
+3. Add a nice README (README.md is already included!)
+
+FOR HELP
+========
+
+Check the files:
+- README.md - Comprehensive documentation
+- QUICK_REFERENCE.sql - Handy SQL commands
+- 06_analytical_queries.sql - Example queries with explanations
+
+Questions? Issues? Document them in your GitHub Issues!
+
+GOOD LUCK WITH YOUR PROJECT!
+============================
