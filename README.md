@@ -226,5 +226,5 @@ This is a portfolio project for educational and demonstration purposes.
 
 ## finance-analytics-db
 PostgreSQL database for financial transaction analytics with advanced SQL queries.
->>>>>>> 049b19d19cc304a71a6120a401193903f977b3b6
+
 
