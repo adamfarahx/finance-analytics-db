@@ -1,8 +1,9 @@
+ HEAD
 # Personal Finance Analytics Database
 
 A comprehensive PostgreSQL database system for tracking and analyzing personal financial transactions, demonstrating intermediate to advanced SQL concepts for financial data engineering.
 
-## 🎯 Project Overview
+##  Project Overview
 
 This project showcases professional database design and SQL skills relevant to financial data engineering roles, including:
 
@@ -12,7 +13,7 @@ This project showcases professional database design and SQL skills relevant to f
 - **Data quality frameworks** with automated validation
 - **Financial domain expertise** in transaction processing and reconciliation
 
-## 📊 Key Features
+##  Key Features
 
 ### Database Design
 - UUID-based primary keys for distributed system scalability
@@ -71,7 +72,7 @@ This project showcases professional database design and SQL skills relevant to f
 - Fields: recurring_id (UUID), account_id (FK), frequency, next_occurrence
 - Supports automated transaction generation
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Prerequisites
 - PostgreSQL 14+ installed
@@ -203,7 +204,7 @@ SELECT refresh_all_materialized_views();
 REFRESH MATERIALIZED VIEW CONCURRENTLY mv_account_summary;
 ```
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 finance-analytics-db/
@@ -257,7 +258,6 @@ finance-analytics-db/
 - ✅ Audit trails (created_at vs transaction_date)
 - ✅ Soft deletes for compliance
 - ✅ Budget variance analysis
-
 ## 🧪 Testing Your Knowledge
 
 ### Interview Prep Questions
@@ -291,18 +291,6 @@ A: transaction_date is when it occurred; created_at is when we recorded it. Crit
 - Create your own queries
 - Understand window functions and CTEs
 
-### Phase 3: Advanced Features (Week 3)
-- Test triggers by inserting transactions
-- Experiment with UPSERT
-- Create custom views
-- Add new analytical queries
-
-### Phase 4: Portfolio Presentation (Week 4)
-- Document your customizations
-- Prepare to discuss design decisions
-- Practice explaining queries
-- Create GitHub repository
-
 ## 📝 Customization Ideas
 
 Extend this project to make it your own:
@@ -333,7 +321,7 @@ Extend this project to make it your own:
    - Unusual transaction detection
    - Bill due reminders
 
-## 🐛 Troubleshooting
+## Troubleshooting
 
 **Issue: "database does not exist"**
 ```bash
@@ -394,3 +382,8 @@ When presenting this project:
 ## License
 
 This is a portfolio project for educational and demonstration purposes.
+=======
+# finance-analytics-db
+PostgreSQL database for financial transaction analytics with advanced SQL queries.
+>>>>>>> 049b19d19cc304a71a6120a401193903f977b3b6
+
