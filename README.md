@@ -1,4 +1,3 @@
- HEAD
 # Personal Finance Analytics Database
 
 A comprehensive PostgreSQL database system for tracking and analyzing personal financial transactions, demonstrating intermediate to advanced SQL concepts for financial data engineering.
@@ -38,7 +37,7 @@ This project showcases professional database design and SQL skills relevant to f
 - Duplicate transaction detection
 - Balance reconciliation
 
-## 🗄️ Database Schema
+## Database Schema
 
 ### Core Tables
 
@@ -258,123 +257,19 @@ finance-analytics-db/
 - ✅ Audit trails (created_at vs transaction_date)
 - ✅ Soft deletes for compliance
 - ✅ Budget variance analysis
-## 🧪 Testing Your Knowledge
 
-### Interview Prep Questions
+## Contact
 
-**Q: Why use UUID instead of SERIAL for primary keys?**
-A: UUIDs enable distributed systems, prevent ID conflicts during merges, and provide better security (non-sequential IDs).
-
-**Q: Why DECIMAL instead of FLOAT for money?**
-A: DECIMAL provides exact precision (no rounding errors). FLOAT can cause penny-off errors that compound over time.
-
-**Q: Explain the unique constraint on transactions.**
-A: Prevents duplicate imports by ensuring (account_id, transaction_date, amount, merchant_name) is unique.
-
-**Q: How would you scale this to billions of transactions?**
-A: Table partitioning by date, read replicas, time-series database (TimescaleDB), archiving old data, and distributed PostgreSQL (Citus).
-
-**Q: Why separate transaction_date from created_at?**
-A: transaction_date is when it occurred; created_at is when we recorded it. Critical for audit trails and reconciliation.
-
-## 🎓 Learning Roadmap
-
-### Phase 1: Basic Setup (Week 1)
-- Run master setup script
-- Explore tables and relationships
-- Run simple SELECT queries
-- Understand the schema design
-
-### Phase 2: Analytical Queries (Week 2)
-- Study the 12 analytical queries
-- Modify queries for different date ranges
-- Create your own queries
-- Understand window functions and CTEs
-
-## 📝 Customization Ideas
-
-Extend this project to make it your own:
-
-1. **Add Investment Tracking**
-   - Portfolio holdings table
-   - Stock price history
-   - Dividend tracking
-   - Return calculations
-
-2. **Multi-Currency Support**
-   - Exchange rate table
-   - Currency conversion functions
-   - Multi-currency reporting
-
-3. **Goal Tracking**
-   - Savings goals table
-   - Progress tracking
-   - Projected completion dates
-
-4. **Tax Preparation**
-   - Tax category mapping
-   - Annual summary reports
-   - Deduction tracking
-
-5. **Alerts System**
-   - Budget threshold alerts
-   - Unusual transaction detection
-   - Bill due reminders
-
-## Troubleshooting
-
-**Issue: "database does not exist"**
-```bash
-createdb finance_analytics_db
-```
-
-**Issue: "permission denied"**
-```bash
-# Make sure you have PostgreSQL privileges
-# Or use: sudo -u postgres psql
-```
-
-**Issue: "function gen_random_uuid() does not exist"**
-```sql
-CREATE EXTENSION IF NOT EXISTS pgcrypto;
-```
-
-**Issue: Scripts not found**
-```bash
-# Make sure you're in the directory with all .sql files
-cd /path/to/sql/files
-```
-
-## 📚 Resources
-
-- [PostgreSQL Documentation](https://www.postgresql.org/docs/)
-- [SQL Style Guide](https://www.sqlstyle.guide/)
-- [PostgreSQL Exercises](https://pgexercises.com/)
-- [Window Functions Tutorial](https://www.postgresql.org/docs/current/tutorial-window.html)
-
-## 🤝 Contributing to Your Portfolio
-
-When presenting this project:
-
-1. **GitHub README**: Use this as template
-2. **ER Diagram**: Create visual schema representation
-3. **Demo Data**: The seed script provides realistic examples
-4. **Query Documentation**: Each query has business context
-5. **Test Results**: Screenshot data quality test results
-
-## 📧 Contact
-
-[Your Name]
-[Your Email]
-[Your LinkedIn]
-[Your GitHub]
+[Adam Farah]
+[adamfarahx@gmail.com]
+[adamfarahx]
 
 ---
 
-**Built with PostgreSQL** 💙
+**Built with PostgreSQL** 
 
-**Project completed**: [Date]  
-**Time invested**: [Hours]  
+**Project completed**: [9/2/2026]  
+**Time invested**: [70 hours]  
 **Skills demonstrated**: Database Design, SQL, Financial Data Engineering, Data Quality
 
 ---
