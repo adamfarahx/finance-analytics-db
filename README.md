@@ -27,6 +27,8 @@ A comprehensive financial transaction analytics system built with PostgreSQL, sh
 
 ## Database Schema
 
+![ER Diagram](finance_analytics_db_image1.png)
+
 ### Core Tables
 
 **users** - User account management
