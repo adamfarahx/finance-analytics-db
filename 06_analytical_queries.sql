@@ -2,9 +2,7 @@
 -- Finance Analytics Database - Analytical Queries
 -- ============================================================================
 -- Description: Complex SQL queries for financial analysis and insights
--- Author: Adam Farah
--- Date: 2026
--- ============================================================================
+
 
 -- ============================================================================
 -- QUERY 1: Monthly Spending Trends with Year-over-Year Comparison
@@ -46,9 +44,9 @@ SELECT
     b.amount - COALESCE(SUM(t.amount), 0) AS remaining_budget,
     ROUND((COALESCE(SUM(t.amount), 0) / b.amount * 100)::NUMERIC, 2) AS percent_used,
     CASE 
-        WHEN COALESCE(SUM(t.amount), 0) > b.amount THEN '❌ OVER BUDGET'
-        WHEN COALESCE(SUM(t.amount), 0) > b.amount * 0.9 THEN '⚠️  WARNING (>90%)'
-        WHEN COALESCE(SUM(t.amount), 0) > b.amount * 0.75 THEN '✓ On Track (75-90%)'
+        WHEN COALESCE(SUM(t.amount), 0) > b.amount THEN 'OVER BUDGET'
+        WHEN COALESCE(SUM(t.amount), 0) > b.amount * 0.9 THEN 'WARNING (>90%)'
+        WHEN COALESCE(SUM(t.amount), 0) > b.amount * 0.75 THEN 'On Track (75-90%)'
         ELSE '✓ Well Under Budget'
     END AS status
 FROM budgets b
@@ -210,7 +208,7 @@ SELECT
                 WHEN t.transaction_type = 'debit' THEN -t.amount
             END
         ), 0)) < 0.01 THEN '✓ Reconciled'
-        ELSE '❌ Mismatch'
+        ELSE 'Mismatch'
     END AS reconciliation_status
 FROM accounts a
 LEFT JOIN transactions t ON a.account_id = t.account_id
@@ -383,10 +381,10 @@ SELECT
     income - expenses AS net_savings,
     ROUND(((income - expenses) / NULLIF(income, 0) * 100)::NUMERIC, 2) AS savings_rate_percent,
     CASE 
-        WHEN ((income - expenses) / NULLIF(income, 0) * 100) >= 20 THEN '🌟 Excellent'
-        WHEN ((income - expenses) / NULLIF(income, 0) * 100) >= 10 THEN '✓ Good'
-        WHEN ((income - expenses) / NULLIF(income, 0) * 100) >= 0 THEN '⚠️  Low'
-        ELSE '❌ Deficit'
+        WHEN ((income - expenses) / NULLIF(income, 0) * 100) >= 20 THEN 'Excellent'
+        WHEN ((income - expenses) / NULLIF(income, 0) * 100) >= 10 THEN 'Good'
+        WHEN ((income - expenses) / NULLIF(income, 0) * 100) >= 0 THEN 'Low'
+        ELSE 'Deficit'
     END AS savings_rating
 FROM monthly_summary
 ORDER BY month DESC;
