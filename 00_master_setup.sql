@@ -18,12 +18,6 @@
 
 \echo ''
 \echo '════════════════════════════════════════════════════════'
-\echo 'Creating Views...'
-\echo '════════════════════════════════════════════════════════'
-\i /Users/adamfarahx/Downloads/finance_project1/03_create_views.sql
-
-\echo ''
-\echo '════════════════════════════════════════════════════════'
 \echo 'Creating Triggers & Functions...'
 \echo '════════════════════════════════════════════════════════'
 \i /Users/adamfarahx/Downloads/finance_project1/04_create_triggers.sql
