@@ -2,13 +2,6 @@
 -- Finance Analytics Database - Views and Materialized Views
 -- ============================================================================
 -- Description: Creates views for common analytical queries
--- Author: Your Name
--- Date: 2024
--- ============================================================================
-
--- ============================================================================
--- REGULAR VIEWS (Dynamic - always current data)
--- ============================================================================
 
 -- Monthly spending summary by category
 CREATE OR REPLACE VIEW v_monthly_spending AS
@@ -27,7 +20,6 @@ WHERE t.transaction_type = 'debit'
 GROUP BY DATE_TRUNC('month', transaction_date)::DATE, c.category_name, c.category_type
 ORDER BY month DESC, total_amount DESC;
 
-COMMENT ON VIEW v_monthly_spending IS 'Monthly spending breakdown by category';
 
 -- Account overview with transaction counts
 CREATE OR REPLACE VIEW v_account_overview AS
@@ -49,7 +41,6 @@ GROUP BY u.email, u.first_name, u.last_name, a.account_name,
          a.account_type, a.balance, a.currency, a.is_active
 ORDER BY u.email, a.account_name;
 
-COMMENT ON VIEW v_account_overview IS 'Complete account overview with transaction summary';
 
 -- Current month budget status
 CREATE OR REPLACE VIEW v_current_budget_status AS
@@ -79,7 +70,6 @@ WHERE b.start_date <= CURRENT_DATE
 GROUP BY u.email, c.category_name, b.amount, b.start_date, b.end_date
 ORDER BY percent_used DESC;
 
-COMMENT ON VIEW v_current_budget_status IS 'Real-time budget tracking for current period';
 
 -- Upcoming recurring transactions (next 30 days)
 CREATE OR REPLACE VIEW v_upcoming_bills AS
@@ -99,11 +89,7 @@ WHERE rt.is_active = TRUE
     AND rt.next_occurrence BETWEEN CURRENT_DATE AND CURRENT_DATE + INTERVAL '30 days'
 ORDER BY rt.next_occurrence;
 
-COMMENT ON VIEW v_upcoming_bills IS 'Upcoming recurring transactions in next 30 days';
 
--- ============================================================================
--- MATERIALIZED VIEWS (Pre-computed - need manual refresh)
--- ============================================================================
 
 -- Account summary statistics (expensive to calculate on-the-fly)
 CREATE MATERIALIZED VIEW mv_account_summary AS
@@ -123,7 +109,6 @@ FROM accounts a
 LEFT JOIN transactions t ON a.account_id = t.account_id
 GROUP BY a.account_id, a.user_id, a.account_name, a.account_type, a.balance;
 
-COMMENT ON MATERIALIZED VIEW mv_account_summary IS 'Pre-computed account statistics - refresh daily';
 
 -- Create index on materialized view for fast lookups
 CREATE UNIQUE INDEX idx_mv_account_summary_id ON mv_account_summary(account_id);
@@ -147,7 +132,6 @@ HAVING COUNT(*) > 1
 ORDER BY total_spent DESC
 LIMIT 100;
 
-COMMENT ON MATERIALIZED VIEW mv_top_merchants IS 'Top 100 merchants by total spending';
 
 -- Category spending trends (last 12 months)
 CREATE MATERIALIZED VIEW mv_category_trends AS
@@ -165,15 +149,10 @@ WHERE t.transaction_date >= CURRENT_DATE - INTERVAL '12 months'
 GROUP BY c.category_name, c.category_type, DATE_TRUNC('month', t.transaction_date)::DATE
 ORDER BY month DESC, total_amount DESC;
 
-COMMENT ON MATERIALIZED VIEW mv_category_trends IS '12-month category spending trends';
 
 CREATE INDEX idx_mv_category_trends_month ON mv_category_trends(month DESC);
 CREATE INDEX idx_mv_category_trends_category ON mv_category_trends(category_name);
 
--- ============================================================================
--- MATERIALIZED VIEW REFRESH FUNCTION
--- ============================================================================
--- Helper function to refresh all materialized views at once
 
 CREATE OR REPLACE FUNCTION refresh_all_materialized_views()
 RETURNS void AS $$
@@ -185,11 +164,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-COMMENT ON FUNCTION refresh_all_materialized_views() IS 'Refreshes all materialized views - run daily';
 
--- ============================================================================
--- SUCCESS MESSAGE
--- ============================================================================
 DO $$
 BEGIN
     RAISE NOTICE '✓ All views created successfully!';
