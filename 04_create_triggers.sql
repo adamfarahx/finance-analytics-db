@@ -2,13 +2,6 @@
 -- Finance Analytics Database - Triggers and Functions
 -- ============================================================================
 -- Description: Automated business logic and data maintenance
--- Author: Your Name
--- Date: 2024
--- ============================================================================
-
--- ============================================================================
--- FUNCTION: Update timestamp on row modification
--- ============================================================================
 
 CREATE OR REPLACE FUNCTION update_updated_at_column()
 RETURNS TRIGGER AS $$
@@ -18,11 +11,6 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-COMMENT ON FUNCTION update_updated_at_column() IS 'Automatically updates updated_at timestamp';
-
--- ============================================================================
--- TRIGGERS: Auto-update timestamps
--- ============================================================================
 
 CREATE TRIGGER trg_users_updated_at
     BEFORE UPDATE ON users
@@ -49,9 +37,7 @@ CREATE TRIGGER trg_recurring_updated_at
     FOR EACH ROW
     EXECUTE FUNCTION update_updated_at_column();
 
--- ============================================================================
--- FUNCTION: Update account balance when transaction is added/modified
--- ============================================================================
+
 
 CREATE OR REPLACE FUNCTION update_account_balance()
 RETURNS TRIGGER AS $$
@@ -115,11 +101,6 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-COMMENT ON FUNCTION update_account_balance() IS 'Maintains account balance based on transactions';
-
--- ============================================================================
--- TRIGGER: Auto-update account balance
--- ============================================================================
 
 CREATE TRIGGER trg_update_balance_insert
     AFTER INSERT ON transactions
@@ -136,9 +117,7 @@ CREATE TRIGGER trg_update_balance_delete
     FOR EACH ROW
     EXECUTE FUNCTION update_account_balance();
 
--- ============================================================================
--- FUNCTION: Validate transaction amount is not zero
--- ============================================================================
+
 
 CREATE OR REPLACE FUNCTION validate_transaction_amount()
 RETURNS TRIGGER AS $$
@@ -155,16 +134,14 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-COMMENT ON FUNCTION validate_transaction_amount() IS 'Ensures transaction amounts are valid';
+
 
 CREATE TRIGGER trg_validate_amount
     BEFORE INSERT OR UPDATE ON transactions
     FOR EACH ROW
     EXECUTE FUNCTION validate_transaction_amount();
 
--- ============================================================================
--- FUNCTION: Update next occurrence for recurring transactions
--- ============================================================================
+
 
 CREATE OR REPLACE FUNCTION calculate_next_occurrence(
     current_date DATE,
@@ -184,11 +161,6 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql IMMUTABLE;
 
-COMMENT ON FUNCTION calculate_next_occurrence IS 'Calculates next occurrence date based on frequency';
-
--- ============================================================================
--- FUNCTION: Process recurring transactions (call this daily)
--- ============================================================================
 
 CREATE OR REPLACE FUNCTION process_recurring_transactions()
 RETURNS TABLE(processed_count INTEGER) AS $$
@@ -245,12 +217,6 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-COMMENT ON FUNCTION process_recurring_transactions() IS 'Processes all due recurring transactions - run daily';
-
--- ============================================================================
--- FUNCTION: Reconcile account balance
--- ============================================================================
--- Compares stored balance with sum of transactions
 
 CREATE OR REPLACE FUNCTION reconcile_account_balance(acc_id UUID)
 RETURNS TABLE(
@@ -290,11 +256,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-COMMENT ON FUNCTION reconcile_account_balance IS 'Verifies account balance matches transaction history';
 
--- ============================================================================
--- SUCCESS MESSAGE
--- ============================================================================
 DO $$
 BEGIN
     RAISE NOTICE '✓ All triggers and functions created successfully!';
