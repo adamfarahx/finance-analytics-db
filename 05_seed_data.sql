@@ -2,22 +2,13 @@
 -- Finance Analytics Database - Seed Data
 -- ============================================================================
 -- Description: Populates database with realistic sample data
--- Author: Your Name
--- Date: 2024
--- ============================================================================
-
--- ============================================================================
--- INSERT USERS
--- ============================================================================
+-- Note: I also inserted myself into the database.
 
 INSERT INTO users (email, first_name, last_name) VALUES
 ('adamfarahx@email.com', 'Adam', 'Farah'),
 ('jane.smith@email.com', 'Jane', 'Smith'),
 ('mike.johnson@email.com', 'Mike', 'Johnson');
 
--- ============================================================================
--- INSERT CATEGORIES
--- ============================================================================
 
 -- Main categories
 INSERT INTO categories (category_name, category_type, description) VALUES
@@ -70,9 +61,7 @@ INSERT INTO categories (category_name, category_type, parent_category_id, descri
 SELECT 'Public Transit', 'expense', category_id, 'Bus, train, subway'
 FROM categories WHERE category_name = 'Transportation';
 
--- ============================================================================
--- INSERT ACCOUNTS
--- ============================================================================
+
 
 -- Accounts for Adam Farah
 INSERT INTO accounts (user_id, account_name, account_type, balance, institution_name, account_number_last4)
@@ -101,9 +90,7 @@ INSERT INTO accounts (user_id, account_name, account_type, balance, institution_
 SELECT user_id, 'Halifax Current Account', 'checking', 3250.75, 'Halifax', '1122'
 FROM users WHERE email = 'mike.johnson@email.com';
 
--- ============================================================================
--- INSERT TRANSACTIONS (Last 90 days of data)
--- ============================================================================
+
 
 -- John's salary (monthly income)
 INSERT INTO transactions (account_id, category_id, transaction_date, amount, transaction_type, description, merchant_name)
@@ -321,9 +308,7 @@ CROSS JOIN generate_series(1, 15)
 WHERE a.account_name = 'Llyods Current Account'
     AND c.category_name = 'Groceries';
 
--- ============================================================================
--- INSERT BUDGETS
--- ============================================================================
+
 
 -- John's budgets for current month
 INSERT INTO budgets (user_id, category_id, amount, start_date, end_date)
@@ -387,9 +372,7 @@ CROSS JOIN categories c
 WHERE u.email = 'jane.smith@email.com'
     AND c.category_name = 'Groceries';
 
--- ============================================================================
--- INSERT RECURRING TRANSACTIONS
--- ============================================================================
+
 
 -- John's recurring bills
 INSERT INTO recurring_transactions (account_id, category_id, amount, description, frequency, start_date, next_occurrence, merchant_name)
@@ -452,15 +435,7 @@ CROSS JOIN categories c
 WHERE a.account_name = 'Barclays Current Account'
     AND c.category_name = 'Entertainment';
 
--- ============================================================================
--- REFRESH MATERIALIZED VIEWS
--- ============================================================================
 
-SELECT refresh_all_materialized_views();
-
--- ============================================================================
--- SUCCESS MESSAGE & SUMMARY
--- ============================================================================
 
 DO $$
 DECLARE
@@ -489,10 +464,4 @@ BEGIN
     RAISE NOTICE '  • Budgets: %', budget_count;
     RAISE NOTICE '  • Recurring Transactions: %', recurring_count;
     RAISE NOTICE '════════════════════════════════════════════════════════';
-    RAISE NOTICE '';
-    RAISE NOTICE 'Try these queries:';
-    RAISE NOTICE '  SELECT * FROM v_account_overview;';
-    RAISE NOTICE '  SELECT * FROM v_monthly_spending LIMIT 10;';
-    RAISE NOTICE '  SELECT * FROM v_current_budget_status;';
-    RAISE NOTICE '  SELECT * FROM v_upcoming_bills;';
 END $$;
