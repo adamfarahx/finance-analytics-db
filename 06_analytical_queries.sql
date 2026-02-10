@@ -240,53 +240,9 @@ WHERE transaction_type = 'debit'
 GROUP BY DATE_TRUNC('week', transaction_date)
 ORDER BY week_start DESC;
 
--- ============================================================================
--- QUERY 9: Recurring Transaction Pattern Detection
--- ============================================================================
--- Business Question: Which merchants might be recurring subscriptions we haven't tracked?
--- Demonstrates: Window functions, date arithmetic, pattern recognition
-
-WITH merchant_patterns AS (
-    SELECT 
-        merchant_name,
-        account_id,
-        amount,
-        transaction_date,
-        LAG(transaction_date) OVER (
-            PARTITION BY merchant_name, account_id, amount 
-            ORDER BY transaction_date
-        ) AS previous_date,
-        transaction_date - LAG(transaction_date) OVER (
-            PARTITION BY merchant_name, account_id, amount 
-            ORDER BY transaction_date
-        ) AS days_between
-    FROM transactions
-    WHERE merchant_name IS NOT NULL
-        AND transaction_type = 'debit'
-)
-SELECT 
-    merchant_name,
-    amount,
-    COUNT(*) AS occurrence_count,
-    MIN(transaction_date) AS first_occurrence,
-    MAX(transaction_date) AS last_occurrence,
-    ROUND(AVG(days_between)::NUMERIC, 1) AS avg_days_between,
-    CASE 
-        WHEN AVG(days_between) BETWEEN 28 AND 32 THEN 'Monthly'
-        WHEN AVG(days_between) BETWEEN 6 AND 8 THEN 'Weekly'
-        WHEN AVG(days_between) BETWEEN 13 AND 15 THEN 'Biweekly'
-        WHEN AVG(days_between) BETWEEN 89 AND 93 THEN 'Quarterly'
-        ELSE 'Irregular'
-    END AS likely_frequency
-FROM merchant_patterns
-WHERE days_between IS NOT NULL
-GROUP BY merchant_name, amount
-HAVING COUNT(*) >= 3  -- At least 3 occurrences
-    AND STDDEV(days_between) < 5  -- Consistent timing (within 5 days variation)
-ORDER BY occurrence_count DESC, avg_days_between;
 
 -- ============================================================================
--- QUERY 10: Income vs Expense Summary by Account
+-- QUERY 9: Income vs Expense Summary by Account
 -- ============================================================================
 -- Business Question: What's the financial summary for each account?
 -- Demonstrates: Multiple aggregations, CASE statements
@@ -317,50 +273,9 @@ LEFT JOIN transactions t ON a.account_id = t.account_id
 GROUP BY u.user_id, u.first_name, u.last_name, a.account_id, a.account_name, a.account_type, a.balance
 ORDER BY account_holder, a.account_name;
 
--- ============================================================================
--- QUERY 11: Category Hierarchy Analysis
--- ============================================================================
--- Business Question: How much am I spending on parent categories and subcategories?
--- Demonstrates: Recursive CTE, hierarchical data
-
-WITH RECURSIVE category_hierarchy AS (
-    -- Base case: top-level categories
-    SELECT 
-        category_id,
-        category_name,
-        parent_category_id,
-        category_name AS full_path,
-        0 AS depth
-    FROM categories
-    WHERE parent_category_id IS NULL
-    
-    UNION ALL
-    
-    -- Recursive case: subcategories
-    SELECT 
-        c.category_id,
-        c.category_name,
-        c.parent_category_id,
-        ch.full_path || ' > ' || c.category_name AS full_path,
-        ch.depth + 1 AS depth
-    FROM categories c
-    JOIN category_hierarchy ch ON c.parent_category_id = ch.category_id
-)
-SELECT 
-    REPEAT('  ', ch.depth) || ch.category_name AS category_display,
-    ch.full_path,
-    COUNT(t.transaction_id) AS transaction_count,
-    COALESCE(SUM(t.amount), 0) AS total_spent,
-    ROUND(COALESCE(AVG(t.amount), 0)::NUMERIC, 2) AS avg_transaction
-FROM category_hierarchy ch
-LEFT JOIN transactions t ON ch.category_id = t.category_id
-    AND t.transaction_type = 'debit'
-    AND t.transaction_date >= CURRENT_DATE - INTERVAL '90 days'
-GROUP BY ch.category_id, ch.category_name, ch.full_path, ch.depth
-ORDER BY ch.full_path;
 
 -- ============================================================================
--- QUERY 12: Savings Rate Calculation
+-- QUERY 10: Savings Rate Calculation
 -- ============================================================================
 -- Business Question: What percentage of income am I saving?
 -- Demonstrates: CTEs, complex calculations
@@ -389,6 +304,3 @@ SELECT
 FROM monthly_summary
 ORDER BY month DESC;
 
--- ============================================================================
--- End of Analytical Queries
--- ============================================================================
