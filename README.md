@@ -91,34 +91,36 @@ psql -d finance_analytics_db
 
 ## SQL Skills Demonstrated
 
-  **Database Design**
+  ### **Database Design**
 - Normalized schema with 6 related tables
 - Foreign key constraints for data integrity
 - CHECK constraints for validation
 - UNIQUE constraints to prevent duplicates
 
-  **Performance Optimization**
+  ### **Performance Optimization**
 - Strategic indexing on frequently queried columns
 - Composite indexes for multi-column queries
 - Understanding of query execution plans
 
-  **Advanced Queries**
+  ### **Advanced Queries**
 - JOINs across multiple tables
 - Aggregate functions (COUNT, SUM, AVG)
 - Subqueries and filtering with WHERE
 - Date functions and calculations
 - GROUP BY for analytical summaries
 
-  **Data Quality**
+  ### **Data Quality**
 - Constraint-based validation
 - Duplicate detection
 - Balance reconciliation
 - Automated testing scripts
 
-  **Automation**
+  ### **Automation**
 - Triggers for automatic balance updates
 - Functions for recurring transaction processing
 - Timestamp tracking for audit trails
+
+--- 
 
 ### Performance Optimization
 
@@ -227,7 +229,7 @@ psql -d finance_analytics_db -f 07_data_quality_tests.sql
 
 - **Database**: PostgreSQL 14+
 - **Languages**: SQL, PL/pgSQL
-- **Concepts**: ACID transactions, normalization, indexing, triggers, materialized views
+- **Concepts**: ACID transactions, normalization, indexing, triggers
 - **Domain**: Financial data engineering, transaction processing, reconciliation
 
 ---
