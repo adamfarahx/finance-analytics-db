@@ -174,7 +174,7 @@ psql -d finance_analytics_db -f 07_data_quality_tests.sql
 **Tests include:**
 - Orphaned records detection
 - Balance reconciliation
-- Date validation
+- Budget date validation
 - NULL value checks
 - Duplicate detection
 - Data completeness verification
