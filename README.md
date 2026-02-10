@@ -19,8 +19,8 @@ A comprehensive financial transaction analytics system built with PostgreSQL, sh
 **Key Metrics:**
 - 6 normalized tables with foreign key relationships
 - 12+ strategic indexes for query optimization
-- 15+ analytical queries demonstrating advanced SQL
-- 15+ automated data quality tests
+- 10+ analytical queries demonstrating advanced SQL
+- 10+ automated data quality tests
 - 100K+ sample transaction records
 
 ---
