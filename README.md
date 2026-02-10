@@ -85,64 +85,47 @@ psql -d finance_analytics_db
 # Check tables
 \dt
 
-# View sample data
-SELECT * FROM v_account_overview;
-SELECT * FROM v_monthly_spending LIMIT 10;
 ```
 
 ---
 
-## Features & SQL Skills Demonstrated
+## SQL Skills Demonstrated
 
-### Advanced SQL Techniques
+  **Database Design**
+- Normalized schema with 6 related tables
+- Foreign key constraints for data integrity
+- CHECK constraints for validation
+- UNIQUE constraints to prevent duplicates
 
-  **Window Functions**
-  
-  Definiton: _window functions_ perform a calculation across a set of table rows that are related to the current row. This is comparable to the type of calculation that can be done with an aggregate function.
-  
-```sql
--- Month-over-month spending comparison with LAG
-SELECT 
-    month,
-    total_spent,
-    LAG(total_spent) OVER (ORDER BY month) AS previous_month,
-    ROUND(((total_spent - LAG(total_spent) OVER (ORDER BY month)) 
-        / LAG(total_spent) OVER (ORDER BY month) * 100)::NUMERIC, 2) AS percent_change
-FROM monthly_summary;
-```
+  **Performance Optimization**
+- Strategic indexing on frequently queried columns
+- Composite indexes for multi-column queries
+- Understanding of query execution plans
 
-  **Common Table Expressions (CTEs)**
+  **Advanced Queries**
+- JOINs across multiple tables
+- Aggregate functions (COUNT, SUM, AVG)
+- Subqueries and filtering with WHERE
+- Date functions and calculations
+- GROUP BY for analytical summaries
 
-  Definition: A CTE (Common Table Expression) is a named temporary result set that exists only for the duration of a single query.
-  
-```sql
--- Budget variance analysis with multiple CTEs
-WITH budget_summary AS (...),
-     actual_spending AS (...)
-SELECT * FROM budget_summary JOIN actual_spending ...
-```
+  **Data Quality**
+- Constraint-based validation
+- Duplicate detection
+- Balance reconciliation
+- Automated testing scripts
 
-  **Recursive Queries**
-
-  Definition: A recursive query is a SQL query that repeatedly runs itself to process data with hierarchical or sequential relationships, stopping only when a condition is met. In SQL, recursive queries are written using a recursive CTE.
-  
-```sql
--- Hierarchical category navigation
-WITH RECURSIVE category_tree AS (
-    SELECT * FROM categories WHERE parent_id IS NULL
-    UNION ALL
-    SELECT c.* FROM categories c 
-    JOIN category_tree ct ON c.parent_id = ct.category_id
-)
-SELECT * FROM category_tree;
-```
+  **Automation**
+- Triggers for automatic balance updates
+- Functions for recurring transaction processing
+- Timestamp tracking for audit trails
 
 ### Performance Optimization
 
-- **Strategic Indexing**: Composite indexes on `(account_id, transaction_date)` for common query patterns
-- **Materialized Views**: Pre-computed aggregations for expensive analytics
-- **Partial Indexes**: Filtered indexes for active records only
-- **Query Analysis**: Using EXPLAIN ANALYZE for optimization
+- Indexes on frequently queried columns (dates, foreign keys)
+- Filtered indexes for active records only
+- Using EXPLAIN ANALYZE for optimization
+- Efficient data retrieval for reporting
 
 ### Data Quality Framework
 
@@ -168,45 +151,14 @@ finance-analytics-db/
 ├── 00_master_setup.sql          # Master setup (runs all scripts)
 ├── 01_create_tables.sql          # Table definitions with constraints
 ├── 02_create_indexes.sql         # Performance indexes
-├── 03_create_views.sql           # Views and materialized views
 ├── 04_create_triggers.sql        # Triggers and functions
 ├── 05_seed_data.sql              # Realistic sample data
 ├── 06_analytical_queries.sql     # 12+ analytical queries
 ├── 07_data_quality_tests.sql     # 15+ validation tests
-└── README.md                     # This file
+└── README.md                     # This file for documentation
 ```
+*Note: File 03 (views) was removed to simplify project scope and focus on core database fundamentals.*
 
----
-
-## Sample Queries
-
-### Monthly Spending Trends
-```sql
-SELECT * FROM v_monthly_spending 
-WHERE month >= CURRENT_DATE - INTERVAL '6 months'
-ORDER BY month DESC;
-```
-
-### Budget vs Actual Analysis
-```sql
-SELECT 
-    category_name,
-    budget_amount,
-    actual_spending,
-    ROUND((actual_spending / budget_amount * 100)::NUMERIC, 2) AS percent_used
-FROM v_current_budget_status
-WHERE percent_used > 90;
-```
-
-### Top Merchants by Spending
-```sql
-SELECT * FROM mv_top_merchants LIMIT 10;
-```
-
-### Duplicate Transaction Detection
-```sql
--- See queries/06_analytical_queries.sql for full implementation
-```
 
 ---
 
@@ -231,11 +183,11 @@ psql -d finance_analytics_db -f 07_data_quality_tests.sql
 
 ### Design Decisions
 
-**Q: Why UUIDs instead of SERIAL IDs?**
+**Q: Why UUIDs instead of regular IDs?**
 - Enables distributed systems without ID conflicts
 - Better security (non-sequential, harder to guess)
-- Supports data merging from multiple sources
-- Industry standard in modern fintech applications
+- Better for systems that scale or merge data from multiple sources
+- Industry standard in modern applications
 
 **Q: Why DECIMAL for money instead of FLOAT?**
 - Exact precision - no floating-point rounding errors
@@ -245,8 +197,6 @@ psql -d finance_analytics_db -f 07_data_quality_tests.sql
 
 **Q: How would you scale this to billions of transactions?**
 - Table partitioning by date ranges (monthly/yearly)
-- Read replicas for analytical queries
-- Distributed PostgreSQL (Citus) for horizontal scaling
 - Time-series database (TimescaleDB) for transaction table
 - Archive old transactions to cold storage
 - Implement caching layer (Redis) for frequent queries
@@ -254,8 +204,20 @@ psql -d finance_analytics_db -f 07_data_quality_tests.sql
 **Q: Why separate transaction_date from created_at?**
 - Audit requirement: when transaction occurred vs when recorded
 - Supports importing historical transactions
-- Critical for reconciliation processes
 - Enables detecting delayed transaction reporting
+
+**Q: How I prevented duplicate transactions?**
+- I used a UNIQUE constraint on the combination of account_id, transaction_date, amount, and merchant_name. 
+   This way, if I tried to import the same transaction twice, the database will reject it automatically.
+
+**Q: What was the hardest part of this project?**
+- I mainly struggled with optimising sql queries and the performance aspect of this project such as indexing and explain plans. I overcame this by practising optimisation on my personal test database i created for employees of a company. Additionally, chapter 14 of the official postgres documentation was very insightful.
+
+**Q: How would you improve this if you had more time?**
+ - I'd add features like:
+   multi-currency support, 
+   simple web interface to visualize the data, 
+   sophisticated analytics like spending predictions based on historical patterns.
 
 ---
 
@@ -273,7 +235,7 @@ psql -d finance_analytics_db -f 07_data_quality_tests.sql
 ## 📧 Contact
 
 **Adam Farah**  
- [adamfarahx@example.com]  
+ [adamfarahx@gmail.com]  
  [GitHub](https://github.com/adamfarahx)
 
 ---
