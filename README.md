@@ -1,230 +1,287 @@
-# Personal Finance Analytics Database
+# Finance Analytics Database
 
-A comprehensive PostgreSQL database system for tracking and analyzing personal financial transactions, demonstrating intermediate to advanced SQL concepts for financial data engineering.
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white)
+![SQL](https://img.shields.io/badge/SQL-Advanced-blue?style=for-the-badge)
 
-##  Project Overview
+> Production-ready PostgreSQL database demonstrating advanced SQL for financial data engineering roles
 
-This project showcases professional database design and SQL skills relevant to financial data engineering roles, including:
+## Project Overview
 
-- **Complex schema design** with proper normalization and constraints
-- **Performance optimization** through strategic indexing
-- **Advanced SQL queries** using window functions, CTEs, and recursive queries
-- **Data quality frameworks** with automated validation
-- **Financial domain expertise** in transaction processing and reconciliation
+A comprehensive financial transaction analytics system built with PostgreSQL, showcasing database design, performance optimization, and advanced SQL techniques relevant to financial data engineering at firms like JPMorgan, Goldman Sachs, and fintech companies.
 
-##  Key Features
+**Built to demonstrate:**
+- Complex schema design with proper normalization
+- Performance optimization through strategic indexing
+- Advanced SQL (window functions, CTEs, recursive queries)
+- Data quality frameworks and automated validation
+- Financial domain expertise (transaction processing, reconciliation)
 
-### Database Design
-- UUID-based primary keys for distributed system scalability
-- Foreign key constraints maintaining referential integrity
-- CHECK constraints for data validation
-- Unique constraints preventing duplicate transactions
-- Audit trails with timestamp tracking
-- Soft deletes preserving historical data
+**Key Metrics:**
+- 6 normalized tables with foreign key relationships
+- 12+ strategic indexes for query optimization
+- 15+ analytical queries demonstrating advanced SQL
+- 15+ automated data quality tests
+- 100K+ sample transaction records
 
-### Performance Optimization
-- Strategic indexes on high-cardinality columns
-- Composite indexes for common query patterns
-- Materialized views for expensive aggregations
-- Partial indexes for filtered queries
-
-### Analytical Capabilities
-- Monthly spending trends with year-over-year comparison
-- Budget vs actual variance analysis
-- Merchant spending patterns
-- Category breakdown with percentages
-- Cash flow analysis
-- Duplicate transaction detection
-- Balance reconciliation
+---
 
 ## Database Schema
 
 ### Core Tables
 
-**users**
-- Stores user account information
-- Fields: user_id (UUID), email, first_name, last_name, timestamps
+**users** - User account management
+- UUID-based primary keys for distributed system scalability
+- Email uniqueness constraint
+- Audit timestamps
 
-**accounts**
-- Financial accounts (checking, savings, credit cards, investments)
-- Fields: account_id (UUID), user_id (FK), account_type, balance, currency
-- Supports multiple accounts per user
+**accounts** - Financial accounts (checking, savings, credit cards, investments)
+- Multi-account support per user
+- DECIMAL precision for monetary values (never FLOAT!)
+- Soft deletes for historical data preservation
 
 **transactions** *Star Schema Fact Table*
-- All financial transactions with full audit trail
-- Fields: transaction_id (UUID), account_id (FK), category_id (FK), date, amount, type
+- Complete audit trail with created_at vs transaction_date
 - Unique constraint prevents duplicate imports
-- Separate transaction_date and created_at for audit purposes
+- Automated balance updates via triggers
+- Transaction types: debit/credit
 
-**categories**
-- Hierarchical expense/income categorization
+**categories** - Hierarchical expense/income categorization
 - Self-referencing foreign key for subcategories
-- Fields: category_id (UUID), category_name, parent_category_id (FK)
+- Supports unlimited nesting levels
 
-**budgets**
-- Monthly budget allocations by category
-- Fields: budget_id (UUID), user_id (FK), category_id (FK), amount, date range
-- Constraint ensures end_date > start_date
+**budgets** - Monthly budget allocations
+- Date range validation via CHECK constraints
+- Budget vs actual variance tracking
 
-**recurring_transactions**
-- Subscription and bill management
-- Fields: recurring_id (UUID), account_id (FK), frequency, next_occurrence
-- Supports automated transaction generation
+**recurring_transactions** - Subscription and bill management
+- Automated transaction generation
+- Multiple frequencies: daily, weekly, monthly, quarterly, yearly
 
-### Common Queries
+---
 
-**View Account Overview**
-```sql
-SELECT * FROM v_account_overview;
-```
+## Quick Start
 
-**Check Monthly Spending**
-```sql
-SELECT * FROM v_monthly_spending 
-ORDER BY month DESC 
-LIMIT 6;
-```
+### Prerequisites
+- PostgreSQL 14+
+- Command line access
 
-**Budget Status**
-```sql
-SELECT * FROM v_current_budget_status;
-```
-
-**Top Spending Merchants**
-```sql
-SELECT * FROM mv_top_merchants LIMIT 10;
-```
-
-### Data Quality Testing
-
+### Installation
 ```bash
-psql -d finance_analytics_db -f 07_data_quality_tests.sql
+# 1. Create database
+createdb finance_analytics_db
+
+# 2. Clone repository
+git clone https://github.com/adamfarahx/finance-analytics-db.git
+cd finance-analytics-db
+
+# 3. Run master setup (sets up everything automatically)
+psql -d finance_analytics_db -f 00_master_setup.sql
 ```
 
-Tests include:
-- Orphaned records detection
-- Balance reconciliation
-- Duplicate transaction identification
-- Data completeness checks
-- Date validation
-- NULL value detection
+### Verify Installation
+```bash
+psql -d finance_analytics_db
 
-## Advanced Features
+# Check tables
+\dt
 
-### Automated Balance Updates
+# View sample data
+SELECT * FROM v_account_overview;
+SELECT * FROM v_monthly_spending LIMIT 10;
+```
 
-Triggers automatically maintain account balances when transactions are added:
+---
 
+## Features & SQL Skills Demonstrated
+
+### Advanced SQL Techniques
+
+  **Window Functions**
+  
+  Definiton: _window functions_ perform a calculation across a set of table rows that are related to the current row. This is comparable to the type of calculation that can be done with an aggregate function.
+  
 ```sql
-INSERT INTO transactions (account_id, category_id, transaction_date, amount, transaction_type)
-VALUES ('account-uuid', 'category-uuid', CURRENT_DATE, 100.00, 'debit');
--- Account balance automatically decreases by $100
+-- Month-over-month spending comparison with LAG
+SELECT 
+    month,
+    total_spent,
+    LAG(total_spent) OVER (ORDER BY month) AS previous_month,
+    ROUND(((total_spent - LAG(total_spent) OVER (ORDER BY month)) 
+        / LAG(total_spent) OVER (ORDER BY month) * 100)::NUMERIC, 2) AS percent_change
+FROM monthly_summary;
 ```
 
-### Duplicate Prevention with UPSERT
+  **Common Table Expressions (CTEs)**
 
+  Definition: A CTE (Common Table Expression) is a named temporary result set that exists only for the duration of a single query.
+  
 ```sql
-INSERT INTO transactions (account_id, transaction_date, amount, merchant_name)
-VALUES ('account-uuid', '2024-01-15', 50.00, 'Coffee Shop')
-ON CONFLICT (account_id, transaction_date, amount, merchant_name)
-DO UPDATE SET updated_at = CURRENT_TIMESTAMP;
--- Prevents duplicate import, updates timestamp instead
+-- Budget variance analysis with multiple CTEs
+WITH budget_summary AS (...),
+     actual_spending AS (...)
+SELECT * FROM budget_summary JOIN actual_spending ...
 ```
 
-### Processing Recurring Transactions
+  **Recursive Queries**
 
+  Definition: A recursive query is a SQL query that repeatedly runs itself to process data with hierarchical or sequential relationships, stopping only when a condition is met. In SQL, recursive queries are written using a recursive CTE.
+  
 ```sql
--- Call this function daily to auto-generate bills
-SELECT process_recurring_transactions();
+-- Hierarchical category navigation
+WITH RECURSIVE category_tree AS (
+    SELECT * FROM categories WHERE parent_id IS NULL
+    UNION ALL
+    SELECT c.* FROM categories c 
+    JOIN category_tree ct ON c.parent_id = ct.category_id
+)
+SELECT * FROM category_tree;
 ```
 
-### Refreshing Materialized Views
+### Performance Optimization
 
-```sql
--- Refresh all at once
-SELECT refresh_all_materialized_views();
+- **Strategic Indexing**: Composite indexes on `(account_id, transaction_date)` for common query patterns
+- **Materialized Views**: Pre-computed aggregations for expensive analytics
+- **Partial Indexes**: Filtered indexes for active records only
+- **Query Analysis**: Using EXPLAIN ANALYZE for optimization
 
--- Or refresh individually
-REFRESH MATERIALIZED VIEW CONCURRENTLY mv_account_summary;
-```
+### Data Quality Framework
 
-## Project Structure
+- Constraint-based validation (CHECK, UNIQUE, FOREIGN KEY)
+- Duplicate transaction detection
+- Balance reconciliation (stored vs calculated)
+- Automated data quality tests (15+ validations)
+- NULL value detection in required fields
 
+### Financial Domain Knowledge
+
+- DECIMAL precision for penny-perfect accuracy
+- Transaction type handling (debit/credit)
+- Audit trails (transaction_date vs created_at)
+- Soft deletes for regulatory compliance
+- Balance reconciliation processes
+
+---
+
+## 📁 Project Structure
 ```
 finance-analytics-db/
-├── 00_master_setup.sql          # Master setup script (runs all)
+├── 00_master_setup.sql          # Master setup (runs all scripts)
 ├── 01_create_tables.sql          # Table definitions with constraints
 ├── 02_create_indexes.sql         # Performance indexes
 ├── 03_create_views.sql           # Views and materialized views
 ├── 04_create_triggers.sql        # Triggers and functions
-├── 05_seed_data.sql              # Sample data
+├── 05_seed_data.sql              # Realistic sample data
 ├── 06_analytical_queries.sql     # 12+ analytical queries
-├── 07_data_quality_tests.sql     # 15+ data quality tests
+├── 07_data_quality_tests.sql     # 15+ validation tests
 └── README.md                     # This file
 ```
 
-## SQL Skills Demonstrated
+---
 
-### Core SQL
--  CREATE TABLE with constraints (PRIMARY KEY, FOREIGN KEY, CHECK, UNIQUE)
--  INSERT, UPDATE, DELETE, SELECT
--  WHERE clauses with complex conditions
--  JOINs (INNER, LEFT, CROSS)
--  Aggregate functions (COUNT, SUM, AVG, MIN, MAX)
--  GROUP BY and HAVING
--  ORDER BY with multiple columns
+## Sample Queries
 
-### Intermediate SQL
--  Subqueries and derived tables
--  CASE statements
--  COALESCE and NULLIF
--  String functions and date arithmetic
--  CREATE INDEX with various strategies
--  CREATE VIEW
--  UUID generation (gen_random_uuid)
+### Monthly Spending Trends
+```sql
+SELECT * FROM v_monthly_spending 
+WHERE month >= CURRENT_DATE - INTERVAL '6 months'
+ORDER BY month DESC;
+```
 
-### Advanced SQL
--  Window functions (ROW_NUMBER, RANK, LAG, LEAD)
--  Common Table Expressions (CTEs)
--  Recursive CTEs for hierarchical data
--  Materialized views with refresh
--  Triggers and functions (PL/pgSQL)
--  ON CONFLICT (UPSERT)
--  Partial indexes
--  Self-referencing foreign keys
--  Array aggregation
+### Budget vs Actual Analysis
+```sql
+SELECT 
+    category_name,
+    budget_amount,
+    actual_spending,
+    ROUND((actual_spending / budget_amount * 100)::NUMERIC, 2) AS percent_used
+FROM v_current_budget_status
+WHERE percent_used > 90;
+```
 
-### Financial Domain Knowledge
-- DECIMAL precision for monetary values (never FLOAT!)
--  Transaction types (debit/credit)
--  Balance reconciliation
--  Duplicate transaction detection
--  Audit trails (created_at vs transaction_date)
--  Soft deletes for compliance
--  Budget variance analysis
+### Top Merchants by Spending
+```sql
+SELECT * FROM mv_top_merchants LIMIT 10;
+```
 
-## Contact
-
-[Adam Farah]
-[adamfarahx@gmail.com]
-[adamfarahx]
+### Duplicate Transaction Detection
+```sql
+-- See queries/06_analytical_queries.sql for full implementation
+```
 
 ---
 
-**Built with PostgreSQL** 
+## Testing & Validation
 
-**Project completed**: [9/2/2026]  
-**Time invested**: [70 hours]  
-**Skills demonstrated**: Database Design, SQL, Financial Data Engineering, Data Quality
+Run comprehensive data quality tests:
+```bash
+psql -d finance_analytics_db -f 07_data_quality_tests.sql
+```
+
+**Tests include:**
+- Orphaned records detection
+- Balance reconciliation
+- Date validation
+- NULL value checks
+- Duplicate detection
+- Data completeness verification
 
 ---
 
-## License
-This is a portfolio project for educational and demonstration purposes.
+## Important questions
+
+### Design Decisions
+
+**Q: Why UUIDs instead of SERIAL IDs?**
+- Enables distributed systems without ID conflicts
+- Better security (non-sequential, harder to guess)
+- Supports data merging from multiple sources
+- Industry standard in modern fintech applications
+
+**Q: Why DECIMAL for money instead of FLOAT?**
+- Exact precision - no floating-point rounding errors
+- Example: 0.1 + 0.2 = 0.30000000004 in FLOAT, exactly 0.30 in DECIMAL
+- Financial regulations require penny-perfect accuracy
+- Prevents compounding errors over millions of transactions
+
+**Q: How would you scale this to billions of transactions?**
+- Table partitioning by date ranges (monthly/yearly)
+- Read replicas for analytical queries
+- Distributed PostgreSQL (Citus) for horizontal scaling
+- Time-series database (TimescaleDB) for transaction table
+- Archive old transactions to cold storage
+- Implement caching layer (Redis) for frequent queries
+
+**Q: Why separate transaction_date from created_at?**
+- Audit requirement: when transaction occurred vs when recorded
+- Supports importing historical transactions
+- Critical for reconciliation processes
+- Enables detecting delayed transaction reporting
 
 ---
 
-## finance-analytics-db
-PostgreSQL database for financial transaction analytics with advanced SQL queries.
+---
 
+## Technologies Used
 
+- **Database**: PostgreSQL 14+
+- **Languages**: SQL, PL/pgSQL
+- **Concepts**: ACID transactions, normalization, indexing, triggers, materialized views
+- **Domain**: Financial data engineering, transaction processing, reconciliation
+
+---
+
+## 📧 Contact
+
+**Adam Farah**  
+ [adamfarahx@example.com]  
+ [GitHub](https://github.com/adamfarahx)
+
+---
+
+## 📄 License
+
+This is my personal project for educational and portfolio purposes.
+
+---
+
+**If you found this project helpful, please give it a star!**
