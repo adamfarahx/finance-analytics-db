@@ -41,7 +41,7 @@ A comprehensive financial transaction analytics system built with PostgreSQL, sh
 - DECIMAL precision for monetary values (never FLOAT!)
 - Soft deletes for historical data preservation
 
-**transactions** *Star Schema Fact Table*
+**transactions** - Card transactions from given bank
 - Complete audit trail with created_at vs transaction_date
 - Unique constraint prevents duplicate imports
 - Automated balance updates via triggers
